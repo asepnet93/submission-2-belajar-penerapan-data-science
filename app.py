@@ -2,17 +2,23 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import joblib
+import pickle
 import warnings
 warnings.filterwarnings('ignore')
 
 # ============================================
-# LOAD MODEL & SCALER
+# LOAD MODEL, SCALER, & ENCODER
 # ============================================
 try:
     model = joblib.load('model_rf.pkl')
     scaler = joblib.load('scaler.pkl')
+    le = joblib.load('label_encoder.pkl')
+    
+    # Load nama kolom kategorikal (dari Notebook)
+    with open('categorical_cols.pkl', 'rb') as f:
+        categorical_cols = pickle.load(f)
 except FileNotFoundError:
-    st.error("File model tidak ditemukan. Pastikan 'model_rf.pkl' dan 'scaler.pkl' ada.")
+    st.error("File model/tools tidak ditemukan. Pastikan semua file .pkl ada.")
     st.stop()
 
 # ============================================
@@ -34,11 +40,21 @@ col1, col2, col3 = st.columns(3)
 
 with col1:
     st.subheader("Data Pribadi & Akademik")
-    marital_status = st.selectbox("Status Pernikahan", [1, 2, 3, 4, 5, 6])
+    
+    # Pilihan status pernikahan dalam bentuk teks
+    marital_status_map = {"Single": 1, "Menikah": 2, "Cerai": 3, "Janda/Duda": 4, "Lainnya 5": 5, "Lainnya 6": 6}
+    marital_status_label = st.selectbox("Status Pernikahan", list(marital_status_map.keys()))
+    marital_status = marital_status_map[marital_status_label]
+    
     application_mode = st.number_input("Mode Pendaftaran", min_value=1, step=1, value=1)
     application_order = st.number_input("Urutan Pendaftaran", min_value=1, step=1, value=1)
     course = st.number_input("Kode Kursus", min_value=1, step=1, value=171)
-    daytime_evening_attendance = st.selectbox("Jadwal Kuliah", [0, 1])
+    
+    # Pilihan jadwal kuliah dalam bentuk teks
+    daytime_map = {"Malam": 0, "Siang": 1}
+    daytime_label = st.selectbox("Jadwal Kuliah", list(daytime_map.keys()))
+    daytime_evening_attendance = daytime_map[daytime_label]
+    
     previous_qualification = st.number_input("Kualifikasi Sebelumnya", min_value=1, step=1, value=1)
     previous_qualification_grade = st.number_input("Nilai Kualifikasi Sebelumnya (0-200)", 
                                                     min_value=0.0, max_value=200.0, value=120.0)
@@ -49,17 +65,38 @@ with col2:
     mothers_qualification = st.number_input("Kualifikasi Ibu", min_value=1, step=1, value=1)
     fathers_qualification = st.number_input("Kualifikasi Ayah", min_value=1, step=1, value=1)
     admission_grade = st.number_input("Nilai Masuk (0-200)", min_value=0.0, max_value=200.0, value=120.0)
-    displaced = st.selectbox("Tempat Tinggal", [0, 1])
-    educational_special_needs = st.selectbox("Kebutuhan Khusus", [0, 1])
-    debtor = st.selectbox("Status Hutang", [0, 1])
-    tuition_fees_up_to_date = st.selectbox("SPP Lunas", [0, 1])
-    gender = st.selectbox("Jenis Kelamin", [0, 1])
+    
+    # Pemetaan untuk pilihan biner (Ya/Tidak)
+    bin_map = {"Tidak": 0, "Ya": 1}
+    
+    displaced_label = st.selectbox("Tempat Tinggal (Terlantar)", list(bin_map.keys()))
+    displaced = bin_map[displaced_label]
+    
+    educational_special_needs_label = st.selectbox("Kebutuhan Khusus", list(bin_map.keys()))
+    educational_special_needs = bin_map[educational_special_needs_label]
+    
+    debtor_label = st.selectbox("Status Hutang (Debtor)", list(bin_map.keys()))
+    debtor = bin_map[debtor_label]
+    
+    tuition_fees_up_to_date_label = st.selectbox("SPP Lunas", list(bin_map.keys()))
+    tuition_fees_up_to_date = bin_map[tuition_fees_up_to_date_label]
+    
+    # Pilihan jenis kelamin dalam bentuk teks
+    gender_map = {"Laki-laki": 0, "Perempuan": 1}
+    gender_label = st.selectbox("Jenis Kelamin", list(gender_map.keys()))
+    gender = gender_map[gender_label]
 
 with col3:
     st.subheader("Data Tambahan")
-    scholarship_holder = st.selectbox("Penerima Beasiswa", [0, 1])
+    
+    scholarship_holder_label = st.selectbox("Penerima Beasiswa", list(bin_map.keys()))
+    scholarship_holder = bin_map[scholarship_holder_label]
+    
     age_at_enrollment = st.number_input("Usia Saat Mendaftar", min_value=17, max_value=70, value=20)
-    international = st.selectbox("Mahasiswa Internasional", [0, 1])
+    
+    international_label = st.selectbox("Mahasiswa Internasional", list(bin_map.keys()))
+    international = bin_map[international_label]
+    
     curricular_units_1st_sem_grade = st.number_input("Nilai Semester 1 (0-20)", 
                                                       min_value=0.0, max_value=20.0, value=10.0)
     curricular_units_2nd_sem_grade = st.number_input("Nilai Semester 2 (0-20)", 
@@ -111,11 +148,8 @@ if st.button("Prediksi Status Mahasiswa", use_container_width=True, type="primar
     with col_proba:
         st.subheader("Tingkat Keyakinan Model:")
         
-        # ========== PERBAIKAN UTAMA DI SINI ==========
-        # Pastikan panjang data sesuai
         proba_values = prediction_proba[0]
         
-        # Buat DataFrame dengan aman
         proba_df = pd.DataFrame({
             "Status": classes,
             "Probabilitas": proba_values
