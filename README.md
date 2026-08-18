@@ -74,7 +74,7 @@ Prototype sistem machine learning dibuat menggunakan **Streamlit**. Aplikasi ini
 Prototype sistem machine learning ini telah di-deploy ke Streamlit Community Cloud dan dapat diakses secara online melalui link berikut:
 
 **Akses Prototype:**
-- **Link:** [https://asepnet93.streamlit.app/]
+- **Link:** [https://asepnet93-submission-2-belajar-penerapan-data-science.streamlit.app/]
 
 ---
 
