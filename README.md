@@ -45,7 +45,7 @@ pip install -r requirements.txt
 Dashboard ini dibuat untuk membantu departemen akademik Jaya Jaya Institut dalam memonitor faktor-faktor yang mempengaruhi dropout rate menggunakan **Google Looker Studio**. Dashboard dapat diakses melalui link berikut:
 
 **Akses Dashboard:**
-- **Link:** [https://datastudio.google.com/reporting/bf8cdd66-7680-4083-ba24-ae48d162316e] 
+- **Link:** [https://datastudio.google.com/reporting/7e11fdea-85c3-4a08-971f-4aa3ee4508af] 
 
 ### Komponen Dashboard
 Dashboard ini menampilkan visualisasi untuk memantau performa mahasiswa dan faktor risiko dropout, antara lain:
