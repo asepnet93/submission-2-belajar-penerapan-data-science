@@ -117,11 +117,11 @@ Actual Graduate   28      414
 ```
 
 #### Feature Importance (5 Faktor Paling Berpengaruh)
-1. **Curricular_units_2nd_sem_grade** (Nilai Semester 2) - 18.35%
-2. **Curricular_units_1st_sem_grade** (Nilai Semester 1) - 14.47%
-3. **Admission_grade** (Nilai Masuk) - 7.31%
-4. **Previous_qualification_grade** (Nilai Kualifikasi Sebelumnya) - 6.46%
-5. **Age_at_enrollment** (Usia Saat Mendaftar) - 6.41%
+1. Curricular_units_2nd_sem_grade (Nilai Semester 2) - 33.49%
+2. Curricular_units_1st_sem_grade (Nilai Semester 1) - 18.59%
+3. Age_at_enrollment (Usia Saat Mendaftar) - 5.57%
+4. Admission_grade (Nilai Masuk) - 3.50%
+5. Previous_qualification_grade (Nilai Kualifikasi Sebelumnya) - 2.90%
 
 #### Prediksi Data Enrolled (Inferensi)
 Model juga digunakan untuk memprediksi **794 siswa yang saat ini berstatus Enrolled** (masih aktif kuliah):
